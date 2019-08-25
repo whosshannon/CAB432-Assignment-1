@@ -1,0 +1,18 @@
+{
+  "name": "moviesearch",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Shannon",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "express": "^4.17.1",
+    "fs": "0.0.1-security",
+    "helmet": "^3.20.0",
+    "morgan": "^1.9.1"
+  }
+}

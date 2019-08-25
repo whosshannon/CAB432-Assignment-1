@@ -29,3 +29,5 @@ node_modules
 
 #General
 .DS_Store
+config.json
+.vscode/

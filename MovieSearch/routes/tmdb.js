@@ -2,8 +2,31 @@ const express = require('express');
 const axios = require('axios');
 const logger = require('morgan');
 const router = express.Router();
+const CONFIG = require("../config.json");
 
 router.use(logger('tiny'));
+
+router.get('/test', (req, res) => {
+    const query = req.query;
+    const options = createTmbdOptions(query['query']);
+
+    const url = `https://${options.hostname}${options.path}`;
+    
+    axios.get(url)
+        .then( (response) => {
+            res.writeHead(response.status, {'content-type': 'text/html'});
+            return response.data;
+        })
+        .then ( (rsp) => {
+            const s = JSON.stringify(rsp);
+            res.write(s);
+            res.end();
+        })
+        .catch((error) => {
+            console.error(error);
+        })
+
+})
 
 router.get('/full', (req, res) => {
     const query = req.query;
@@ -46,33 +69,60 @@ router.get('/:query/:number', (req, res) => {
         })
 });
 
-const flickr = {
-    method: 'flickr.photos.search',
-    api_key: "acf9768ff287f329da45f722ab560cd0",
-    format: "json",
-    media: "photos",
-    nojsoncallback: 1
+//TODO: make a config file for api keys and whathaveyou
+
+
+const tmdb = {
+    api_key: CONFIG.tmdb_api_key,
+    lang: 'en-US',
+    page: '1',
+    include_adult: 'false'
+}
+
+function createTmbdOptions(query) {
+    const options = {
+        hostname: 'api.themoviedb.org',
+        port: 443,
+        path: '/3/search/multi?'
+    }
+    
+    const str = 'api_key=' + tmdb.api_key +
+    '&language=' + tmdb.lang +
+    '&query=' + query +
+    '&page=' + tmdb.page +
+    '&include_adult=' + tmdb.include_adult;
+    
+    options.path+=str;
+    return options;
 };
 
-function createFlickrOptions(query,number) {
-    const options = {
-        hostname: 'api.flickr.com',
-        port: 443,
-        path: '/services/rest/?',
-        method: 'GET'
-    }
+// const flickr = {
+//     method: 'flickr.photos.search',
+//     api_key: "bb72d05f51ca06cd49676c5b457cfc46",
+//     format: "json",
+//     media: "photos",
+//     nojsoncallback: 1
+// };
 
-    const str = 'method=' + flickr.method +
-            '&api_key=' + flickr.api_key +
-            '&tags=' + query +
-            '&per_page=' + number +
-            '&format=' + flickr.format +
-            '&media=' + flickr.media +
-            '&nojsoncallback=' + flickr.nojsoncallback;
+// function createFlickrOptions(query,number) {
+//     const options = {
+//         hostname: 'api.flickr.com',
+//         port: 443,
+//         path: '/services/rest/?',
+//         method: 'GET'
+//     }
 
-    options.path += str;
-    return options;
-}
+//     const str = 'method=' + flickr.method +
+//             '&api_key=' + flickr.api_key +
+//             '&tags=' + query +
+//             '&per_page=' + number +
+//             '&format=' + flickr.format +
+//             '&media=' + flickr.media +
+//             '&nojsoncallback=' + flickr.nojsoncallback;
+
+//     options.path += str;
+//     return options;
+// }
 
 function parsePhotoRsp(rsp) {
     let s = "";
