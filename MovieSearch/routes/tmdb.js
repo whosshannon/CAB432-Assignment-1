@@ -18,8 +18,8 @@ router.get('/test', (req, res) => {
             return response.data;
         })
         .then ( (rsp) => {
-            const s = JSON.stringify(rsp);
-            res.write(s);
+            const c = createPageTMDB("wahoo", rsp);
+            res.write(c);
             res.end();
         })
         .catch((error) => {
@@ -49,29 +49,6 @@ router.get('/full', (req, res) => {
         })
 })
 
-router.get('/:query/:number', (req, res) => {
-    const options = createFlickrOptions(req.params.query,req.params.number);
-
-    const url = `https://${options.hostname}${options.path}`;
-
-    axios.get(url)
-        .then( (response) => {
-            res.writeHead(response.status, {'content-type': 'text/html'});
-            return response.data;
-        })
-        .then ( (rsp) => {
-            const s = createPage('Flickr Photo Search', rsp);
-            res.write(s);
-            res.end();
-        })
-        .catch((error) => {
-            console.error(error);
-        })
-});
-
-//TODO: make a config file for api keys and whathaveyou
-
-
 const tmdb = {
     api_key: CONFIG.tmdb_api_key,
     lang: 'en-US',
@@ -83,7 +60,7 @@ function createTmbdOptions(query) {
     const options = {
         hostname: 'api.themoviedb.org',
         port: 443,
-        path: '/3/search/multi?'
+        path: '/3/search/person?'
     }
     
     const str = 'api_key=' + tmdb.api_key +
@@ -96,58 +73,29 @@ function createTmbdOptions(query) {
     return options;
 };
 
-// const flickr = {
-//     method: 'flickr.photos.search',
-//     api_key: "bb72d05f51ca06cd49676c5b457cfc46",
-//     format: "json",
-//     media: "photos",
-//     nojsoncallback: 1
-// };
+function createPageTMDB(title, rsp) {
+    const results = rsp.total_results;
+    console.log("results: " + results);
+    console.log();
 
-// function createFlickrOptions(query,number) {
-//     const options = {
-//         hostname: 'api.flickr.com',
-//         port: 443,
-//         path: '/services/rest/?',
-//         method: 'GET'
-//     }
-
-//     const str = 'method=' + flickr.method +
-//             '&api_key=' + flickr.api_key +
-//             '&tags=' + query +
-//             '&per_page=' + number +
-//             '&format=' + flickr.format +
-//             '&media=' + flickr.media +
-//             '&nojsoncallback=' + flickr.nojsoncallback;
-
-//     options.path += str;
-//     return options;
-// }
-
-function parsePhotoRsp(rsp) {
-    let s = "";
-
-    for (let i = 0; i < rsp.photos.photo.length; i++) {
-        photo = rsp.photos.photo[i];
-        t_url = `https://farm${photo.farm}.staticflickr.com/${photo.server}/${photo.id}_${photo.secret}_t.jpg`;
-        p_url = `https://www.flickr.com/photos/${photo.owner}/${photo.id}`;
-        s += `<a href="${p_url}"><img alt="${photo.title}" src="${t_url}"/></a>`;
-    }
-
-    return s;
-}
-
-function createPage(title,rsp) {
-    const number = rsp.photos.photo.length;
-    const imageString = parsePhotoRsp(rsp);
-    //Headers and opening body, then main content and close
-    const str = '<!DOCTYPE html>' +
-        '<html><head><title>Flickr JSON</title></head>' +
+    let str = '<!DOCTYPE html>' +
+        '<html><head><title>TBDM</title></head>' +
         '<body>' +
-        '<h1>' + title + '</h1>' +
-        'Total number of entries is: ' + number + '</br>' +
-        imageString +
-        '</body></html>';
+        '<h1>' + title + '</h1>';
+    for (let counter in rsp.results) {
+        const item = rsp.results[counter];
+        console.log("item " + item + ": " + item.name + " with ID " + item.id);
+        console.log();
+
+        const itemStr = '</br> <a href="https://www.themoviedb.org/person/' + item.id + '"> <div>' +
+        '<img src="https://image.tmdb.org/t/p/w600_and_h900_bestv2' + item.profile_path + '" alt= "' + item.id + '" height="200">' +
+        '<p><b>' + item.name + '</b> known for ' + item.known_for_department + ' with id ' + item.id + '</p>'
+        + '</div> </a>';
+
+        str+= itemStr;
+    }
+    str += '</body></html>';
+
     return str;
 }
 
