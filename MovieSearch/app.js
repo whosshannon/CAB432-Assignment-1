@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const helmet = require('helmet');
 const tmdbRouter = require('./routes/tmdb');
+const newsRouter = require('./routes/news');
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/search',tmdbRouter); 
+app.use('/news', newsRouter);
 
 app.listen(port, function () {
     console.log(`Express app listening at http://${hostname}:${port}/`);
