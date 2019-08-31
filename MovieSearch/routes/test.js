@@ -12,7 +12,7 @@ router.get('/', (req, res) => {
 
     const url = `https://${options.hostname}${options.path}`;
     
-    axios.get(url)
+    axios.get(url) 
         .then( (response) => {
             res.writeHead(response.status, {'content-type': 'text/html'});
             return response.data;
@@ -50,21 +50,17 @@ function createTmbdOptions(query, year) {
     return options;
 };
 
-//TODO: convert into React
 function createPageTMDB(title, rsp) {
-    const results = rsp.total_results;
-    console.log("results: " + results);
-    console.log();
-
+    
     let str = '<!DOCTYPE html>' +
-        '<html><head><title>TBDM</title></head>' +
-        '<body>' +
-        '<h1>Search results for: "' + title + '"</h1>';
+    '<html><head><title>TBDM</title></head>' +
+    '<body>' +
+    '<h1>Search results for: "' + title + '"</h1>';
     for (let counter in rsp.results) {
         const item = rsp.results[counter];
 
-        const itemStr = '</br> <a href="http://127.0.0.1:3000/news?query='
-        + item.title+  '"> <div style="background-color:rgb(250, 250, 250);">' +
+        const itemStr = '</br> <a href="http://127.0.0.1:3000/news?id='
+        + item.id +  '"> <div style="background-color:rgb(250, 250, 250);">' +
         '<img src="https://image.tmdb.org/t/p/w600_and_h900_bestv2' + item.poster_path 
         + '" alt= "' + item.id + '" height="200">' 
         +'<p><b>' + item.title + '</b></p><p>Released date: ' + item.release_date + '</p><p>'  
