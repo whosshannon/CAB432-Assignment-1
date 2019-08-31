@@ -1,0 +1,19 @@
+extends layout
+
+block content
+    .ui.container
+        .ui.basic.center.aligned.segment
+            //- h1.ui.header GitHub Status
+            //- if rsp.status.indicator === "none"
+            //-     .ui.green.huge.statistic
+            //-         .value #{rsp.status.description}
+            //- else
+            //-     .ui.red.huge.statistic
+            //-         .value Severity is #{rsp.status.indicator}
+            //-     .ui.red.huge.statistic
+            //-         .value #{rsp.status.description} 
+            p Show me news for
+            .ui.icon.input
+                input(type='text' placeholder='Search...')
+                i.search.icon
+
