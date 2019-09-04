@@ -1,8 +1,28 @@
 body {
-    padding: 75px;
+    padding: 5px;
     font: 14px "Lucida Grande", Helvetica, Arial, sans -serif;
 }
 
 a {
-    color: #00B7FF;
+    color: inherit;
+}
+
+a:hover {
+    color: rgb(100, 100, 100);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.infoBlock {
+    border: 2px solid LightGray;
+    border-radius: 5px;
+    padding: 20px;
+    text-align: left;
+    overflow: auto;
+}
+
+.poster {
+    float: right;
+    padding-left: 15px;
+    height: 250px;
 }

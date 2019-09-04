@@ -1,0 +1,16 @@
+extends layout
+
+block content
+    .ui.container
+        .ui.basic.center.aligned.segment
+            h1(style='text-align: left') News about:  "#{cast}"
+            each item in response
+                .ui.basic.left.aligned.segment
+                    a(href=item.url)
+                        div(class="infoBlock")
+                            if item.urlToImage
+                                img(src=item.urlToImage alt=item.title height='200' style="float: right; padding-left:15px;")
+                            h2=item.title
+                            h3=item.author
+                            h5=item.publishedAt
+                            p=item.description

@@ -19,12 +19,13 @@ router.get('/', async (req, res) => {
     
     axios.get(url)
         .then( (response) => {
-            res.writeHead(response.status, {'content-type': 'text/html'});
+            //res.writeHead(response.status, {'content-type': 'text/html'});
             return response.data;
         })
         .then ( (rsp) => {
-            const c = createNewsPage(cast, rsp);
-            res.write(c);
+            res.render('news', {cast: decodeURI(cast), response:rsp.articles})
+            // const c = createNewsPage(cast, rsp);
+            // res.write(c);
             res.end();
         })
         .catch((error) => {

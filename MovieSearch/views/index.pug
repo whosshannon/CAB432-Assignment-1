@@ -3,17 +3,9 @@ extends layout
 block content
     .ui.container
         .ui.basic.center.aligned.segment
-            //- h1.ui.header GitHub Status
-            //- if rsp.status.indicator === "none"
-            //-     .ui.green.huge.statistic
-            //-         .value #{rsp.status.description}
-            //- else
-            //-     .ui.red.huge.statistic
-            //-         .value Severity is #{rsp.status.indicator}
-            //-     .ui.red.huge.statistic
-            //-         .value #{rsp.status.description} 
-            p Show me news for
+            h1 MovieNews
+            p(style="display: inline-block; margin-top:150px;") Show me news for &nbsp;&nbsp;&nbsp;
             .ui.icon.input
-                input(type='text' placeholder='Search...')
-                i.search.icon
+                input(type='text' placeholder='Search...' style="display: inline-block; margin-top:150px;")
+                i.search.icon(style="margin-top:75px;")
 

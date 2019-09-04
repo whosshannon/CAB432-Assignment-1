@@ -1,15 +1,15 @@
 const express = require('express');
-const fs = require('fs');
 const helmet = require('helmet');
+const path = require('path');
 const searchRouter = require('./routes/search');
 const newsRouter = require('./routes/news');
 const testRouter = require('./routes/test');
-var path = require('path');
 
 const app = express();
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+app.use("/static", express.static(path.join(__dirname, "public")));
 
 const hostname = '127.0.0.1';
 const port = 3000;

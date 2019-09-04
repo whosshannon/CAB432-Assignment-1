@@ -3,3 +3,13 @@ extends layout
 block content
     .ui.container
         .ui.basic.center.aligned.segment
+            h1(style='text-align: left') Results for:  "#{query}"
+            each item in response
+                .ui.basic.left.aligned.segment
+                    a(href='http://127.0.0.1:3000/news?id='+item.id)
+                        div(class="infoBlock")
+                            if item.poster_path
+                                img(class="poster" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2" + item.poster_path alt=item.id)
+                            h2=item.title
+                            h5=item.release_date
+                            p=item.overview

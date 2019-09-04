@@ -14,12 +14,11 @@ router.get('/', (req, res) => {
     
     axios.get(url) 
         .then( (response) => {
-            res.writeHead(response.status, {'content-type': 'text/html'});
+            // res.writeHead(response.status, {'content-type': 'text/html'});
             return response.data;
         })
         .then ( (rsp) => {
-            const htmlResponse = createPageTMDB(query['query'], rsp);
-            res.write(htmlResponse);
+            res.render('search', {query: query['query'], response: rsp.results});
             res.end();
         })
         .catch((error) => {
@@ -49,29 +48,5 @@ function createTmbdOptions(query, year) {
     options.path+=str;
     return options;
 };
-
-function createPageTMDB(title, rsp) {
-    
-    let str = '<!DOCTYPE html>' +
-    '<html><head><title>TBDM</title></head>' +
-    '<body>' +
-    '<h1>Search results for: "' + title + '"</h1>';
-    for (let counter in rsp.results) {
-        const item = rsp.results[counter];
-
-        const itemStr = '</br> <a href="http://127.0.0.1:3000/news?id='
-        + item.id +  '"> <div style="background-color:rgb(250, 250, 250);">' +
-        '<img src="https://image.tmdb.org/t/p/w600_and_h900_bestv2' + item.poster_path 
-        + '" alt= "' + item.id + '" height="200">' 
-        +'<p><b>' + item.title + '</b></p><p>Released date: ' + item.release_date + '</p><p>'  
-        + item.overview + '</p>'
-        + '</div> </a>';
-
-        str+= itemStr;
-    }
-    str += '</body></html>';
-
-    return str;
-}
 
 module.exports = router;
