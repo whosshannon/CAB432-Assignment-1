@@ -6,34 +6,31 @@ const CONFIG = require("../config.json");
 
 router.use(logger('tiny'));
 
-router.get('/', async (req, res) => {
+router.get('/', (req, res) => {
     const query = req.query;
-    
-    const cast = await getCast(query['id']);
 
-    const options = createNewsOptions(cast, query['sortBy']);
+    getCast(query['id'])
+        .then( (cast) => {
+            const options = createNewsOptions(cast, query['sortBy']);
 
-    const url = `https://${options.hostname}${options.path}`;
+            const url = `https://${options.hostname}${options.path}`;
 
-    console.log(url);
-    
-    axios.get(url)
-        .then( (response) => {
-            //res.writeHead(response.status, {'content-type': 'text/html'});
-            return response.data;
-        })
-        .then ( (rsp) => {
-            res.render('news', {cast: decodeURI(cast), response:rsp.articles})
-            // const c = createNewsPage(cast, rsp);
-            // res.write(c);
-            res.end();
-        })
-        .catch((error) => {
-            console.error(error);
+            axios.get(url)
+            .then( (response) => {
+                return response.data;
+            })
+            .then ( (rsp) => {
+                res.render('news', {cast: decodeURI(cast), response:rsp.articles})
+                res.end();
+            })
+            .catch((error) => {
+                console.error(error);
+            })
+
         })
 })
 
-async function getCast(id) {
+function getCast(id) {
     const options = createTmbdMovieOptions(id);
     const url = `https://${options.hostname}${options.path}`;
 

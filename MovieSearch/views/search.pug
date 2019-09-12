@@ -6,7 +6,9 @@ block content
             h1(style='text-align: left') Results for:  "#{query}"
             each item in response
                 .ui.basic.left.aligned.segment
-                    a(href='http://127.0.0.1:3000/news?id='+item.id)
+                    a(href='http://localhost:3000/news?id='+item.id) 
+                        //-
+                            DEBUG: above is  dev. in docker needs 'http://localhost/news?id='
                         div(class="infoBlock")
                             if item.poster_path
                                 img(class="poster" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2" + item.poster_path alt=item.id)

@@ -14,7 +14,6 @@ router.get('/', (req, res) => {
     
     axios.get(url) 
         .then( (response) => {
-            // res.writeHead(response.status, {'content-type': 'text/html'});
             return response.data;
         })
         .then ( (rsp) => {
@@ -27,7 +26,7 @@ router.get('/', (req, res) => {
 })
 
 const tmdb = {
-    api_key: CONFIG.tmdb_api_key,
+    api_key: CONFIG.tmbd_api_key,
     lang: 'en-US',
     include_adult: 'false'
 }
