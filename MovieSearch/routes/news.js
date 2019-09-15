@@ -11,7 +11,7 @@ router.get('/', (req, res) => {
 
     getCast(query['id'])
         .then( (cast) => {
-            const options = createNewsOptions(cast, query['sortBy']);
+            const options = createNewsOptions(cast);
 
             const url = `https://${options.hostname}${options.path}`;
 
@@ -20,7 +20,7 @@ router.get('/', (req, res) => {
                 return response.data;
             })
             .then ( (rsp) => {
-                res.render('news', {cast: decodeURI(cast), response:rsp.articles})
+                res.render('news', {cast: castString(cast), response:rsp.articles})
                 res.end();
             })
             .catch((error) => {
@@ -30,6 +30,7 @@ router.get('/', (req, res) => {
         })
 })
 
+//returns the top three cast of a given movie
 function getCast(id) {
     const options = createTmbdMovieOptions(id);
     const url = `https://${options.hostname}${options.path}`;
@@ -48,6 +49,15 @@ function getCast(id) {
     return cast;
 }
 
+//returns a nicely readable version of the returned cast
+function castString(cast) {
+    cast = decodeURI(cast);
+    cast = cast.replace("OR", ", ").replace("OR", ", or ");
+    cast = cast.replace(/"/g, "");
+    return cast;
+}
+
+//compiles options for the request to TMDB
 function createTmbdMovieOptions(id) {
     const options = {
         hostname: 'api.themoviedb.org',
@@ -61,13 +71,14 @@ function createTmbdMovieOptions(id) {
     return options;
 };
 
+//fixed news request options
 const newsOptions = {
     api_key: CONFIG.newsapi_key,
-    language: "en",
-    page_size: 10
+    language: "en"
 }
 
-function createNewsOptions(cast, sortBy) {
+//compiles options for the request to NewsAPI
+function createNewsOptions(cast) {
     const options = {
         hostname: 'newsapi.org',
         port: 443,
@@ -75,36 +86,11 @@ function createNewsOptions(cast, sortBy) {
     }
     
     const str = 'q=' + cast
-    + '&pageSize=' + newsOptions.page_size
     + '&language=' + newsOptions.language
-    + '&sortBy=' + sortBy
     + '&apiKey=' + newsOptions.api_key;
     
     options.path+=str;
     return options;
 };
-
-function createNewsPage(query, rsp) {
-    let str = '<!DOCTYPE html>' +
-        '<html><head><title>News</title></head>' +
-        '<body>' +
-        '<h1>Search results for: ' + decodeURI(query) + '</h1>';
-
-    for (let i = 0; i < rsp.articles.length; i++) {
-        const item = rsp.articles[i];
-
-        const itemStr = '</br> <a href="' + item.url + '">'
-        + '<div style="background-color:rgb(250, 250, 250);">'
-        +'<p><b>' + item.title + '</b></p>'
-        + '<p>By: ' + item.author + '</p> <p>Published at: ' + item.publishedAt
-        + '</p> <p>' + item.description + '</p>'
-        + '</div> </a>';
-
-        str+= itemStr;
-    }
-    str += '</body></html>';
-
-    return str;
-}
 
 module.exports = router;

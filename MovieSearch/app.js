@@ -3,7 +3,6 @@ const helmet = require('helmet');
 const path = require('path');
 const searchRouter = require('./routes/search');
 const newsRouter = require('./routes/news');
-const testRouter = require('./routes/test');
 
 const app = express();
 
@@ -16,14 +15,14 @@ const port = 3000;
 
 app.use(helmet());
 
+//serve the 'home page'
 app.get('/', (req, res) => {
-    //res.writeHead(200,{'content-type': 'text/html'});
     res.render('index');
 });
 
+//make available all the other routes
 app.use('/search',searchRouter); 
 app.use('/news', newsRouter);
-app.use('/test', testRouter);
 
 app.listen(port, function () {
     console.log(`Express app listening at http://${hostname}:${port}/`);

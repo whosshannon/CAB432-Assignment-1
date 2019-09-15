@@ -8,7 +8,7 @@ router.use(logger('tiny'));
 
 router.get('/', (req, res) => {
     const query = req.query;
-    const options = createTmbdOptions(query['query'], query['year']);
+    const options = createTmbdOptions(query['query']);
 
     const url = `https://${options.hostname}${options.path}`;
     
@@ -25,25 +25,27 @@ router.get('/', (req, res) => {
         })
 })
 
-const tmdb = {
+//fixed TMDB request options
+const tmdbOptions = {
     api_key: CONFIG.tmbd_api_key,
     lang: 'en-US',
     include_adult: 'false'
 }
 
-function createTmbdOptions(query, year) {
+//compiles options for the request to TMDB
+function createTmbdOptions(query) {
     const options = {
         hostname: 'api.themoviedb.org',
         port: 443,
         path: '/3/search/movie?'
     }
     
-    const str = 'api_key=' + tmdb.api_key +
-    '&language=' + tmdb.lang +
+    const str = 'api_key=' + tmdbOptions.api_key +
+    '&language=' + tmdbOptions.lang +
     '&query=' + query +
-    '&year=' + year +
-    '&include_adult=' + tmdb.include_adult;
+    '&include_adult=' + tmdbOptions.include_adult;
     
+    console.log(str);
     options.path+=str;
     return options;
 };
