@@ -13,11 +13,11 @@ block content
                             h5=item.release_date
                             p=item.overview
 
-                            a(href='http://localhost:3000/news?id='+item.id+'&searchFor=cast')
+                            a(href='http://127.0.0.1/news?id='+item.id+'&searchFor=cast')
                                 //-
-                                    DEBUG: above is  dev. in docker needs 'http://localhost/news?id='
+                                    DEBUG: above is  dev. in docker needs 'http://127.0.0.1/news?id='
                                 button.ui.button.castButton
                                     | Search cast
-                            a(href='http://localhost:3000/news?id='+item.id+'&searchFor=production')
+                            a(href='http://127.0.0.1/news?id='+item.id+'&searchFor=production')
                                 button.ui.button.productionButton
                                     | Search production companies

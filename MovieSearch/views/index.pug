@@ -14,7 +14,9 @@ block content
                 | . There you can choose the correct movie and you will be redirected to the /news route.
             h4 /news
             p
-                | News follows '/news?id=movie_id&searchFor=cast_or_production' where the movie_id is an integer according to The Movie Database and cast_or_production specifies whether you want to search the news for the top three cast of the movie or the top three production studios.
-                | This is generated for you when you choose a movie from the search page. The news is collected from 
+                | News follows '/news?id=movie_id&searchFor=cast_or_production' where the movie_id is an integer according to 
+                | The Movie Database and cast_or_production specifies whether you want to search the news 
+                | for the top three cast of the movie or the top three production studios. The default cast_or_production is cast.
+                | These are generated for you when you choose a movie from the search page. The news is collected from 
                 a(href="https://newsapi.org/" style="text-decoration: underline;") the News API
                 | . You can read the full article by clicking it.

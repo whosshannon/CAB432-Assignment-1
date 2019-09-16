@@ -10,7 +10,7 @@ router.get('/', (req, res) => {
     const query = req.query;
     let searchCast=true;
 
-    if (query['searchFor'] == 'cast' || query['searchFor'] == undefined) {
+    if (query['searchFor'] == 'cast' || query['searchFor'] == undefined) { //default to 
         searchCast = true;
     } else if (query['searchFor'] == 'production') {
         searchCast = false;
@@ -18,22 +18,25 @@ router.get('/', (req, res) => {
 
     getDetails(query['id'], searchCast)
         .then( (cast) => {
-            const options = createNewsOptions(cast);
+            if (cast != null) {
+                const options = createNewsOptions(cast);
 
-            const url = `https://${options.hostname}${options.path}`;
+                const url = `https://${options.hostname}${options.path}`;
 
-            axios.get(url)
-            .then( (response) => {
-                return response.data;
-            })
-            .then ( (rsp) => {
-                    res.status(200).render('news', {cast: castString(cast), response:rsp.articles})
-                    res.end();
-            })
-            .catch((error) => {
-                console.error(error);
-            })
-
+                axios.get(url)
+                .then( (response) => {
+                    return response.data;
+                })
+                .then ( (rsp) => {
+                        res.status(200).render('news', {cast: castString(cast), response:rsp.articles})
+                        res.end();
+                })
+                .catch((error) => {
+                    console.error(error);
+                })
+            } else {
+                res.status(200).render('error', {error:"No news to show!", details:"Looks like that movie doesn't have any cast/production companies that we can show you."})
+            }
         })
 })
 
@@ -44,12 +47,18 @@ function getDetails(id, searchCast) {
 
     let cast = axios.get(url)
         .then( (response) => {
+            if (searchCast && response.data.cast.length == 0) {
+                return null;
+            } else if (!searchCast && response.data.production_companies.length == 0) {
+                return null;
+            }
+
             topThreeCast = "";
             for (let i = 0; i < 3; i++) {
                 if (searchCast) {
-                    topThreeCast+= encodeURI('"' + response.data.cast[i].name + '"OR');
+                    topThreeCast+= encodeURIComponent('"' + response.data.cast[i].name + '"OR');
                 } else {
-                    topThreeCast+= encodeURI('"' + response.data.production_companies[i].name + '"OR');
+                    topThreeCast+= encodeURIComponent('"' + response.data.production_companies[i].name + '"OR');
                 }
             }
             return topThreeCast.slice(0, topThreeCast.length-2);
@@ -62,7 +71,7 @@ function getDetails(id, searchCast) {
 
 //returns a nicely readable version of the returned cast
 function castString(cast) {
-    cast = decodeURI(cast);
+    cast = decodeURIComponent(cast);
     cast = cast.replace("OR", ", ").replace("OR", ", or ");
     cast = cast.replace(/"/g, "");
     return cast;
@@ -75,12 +84,11 @@ function createTmbdMovieOptions(id, searchCast) {
         port: 443,
         path: '/3/movie/'+id+'/credits?'
     }
-
     if (!searchCast) {
         options.path = '/3/movie/'+id+'?';
     }
     
-    const str = 'api_key=' + CONFIG.other_tmbd_api_key; //TODO: figure out why the hell it wont let me use the one?? like nothing happened to the first one???
+    const str = 'api_key=' + CONFIG.other_tmbd_api_key; //DEBUG: will only let me use each config item once. otherwise undefined
     
     options.path+=str;
     return options;
@@ -103,6 +111,8 @@ function createNewsOptions(cast) {
     const str = 'q='+ cast
     + '&language=' + newsOptions.language
     + '&apiKey=' + newsOptions.api_key;
+
+    console.log(str)
     
     options.path+=str;
     return options;
