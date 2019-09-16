@@ -6,14 +6,18 @@ block content
             h1(style='text-align: left') Results for:  "#{query}"
             each item in response
                 .ui.basic.left.aligned.segment
-                    a(href='http://localhost:3000/news?id='+item.id) 
-                        //-
-                            DEBUG: above is  dev. in docker needs 'http://localhost/news?id='
                         div(class="infoBlock")
                             if item.poster_path
                                 img(class="poster" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2" + item.poster_path alt=item.id)
                             h2=item.title
                             h5=item.release_date
                             p=item.overview
-                            //- button(type='button') Search cast
-                            //- button(type='button') Search production companies
+
+                            a(href='http://localhost:3000/news?id='+item.id+'&searchFor=cast')
+                                //-
+                                    DEBUG: above is  dev. in docker needs 'http://localhost/news?id='
+                                button.ui.button.castButton
+                                    | Search cast
+                            a(href='http://localhost:3000/news?id='+item.id+'&searchFor=production')
+                                button.ui.button.productionButton
+                                    | Search production companies

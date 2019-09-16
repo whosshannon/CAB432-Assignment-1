@@ -8,8 +8,15 @@ router.use(logger('tiny'));
 
 router.get('/', (req, res) => {
     const query = req.query;
+    let searchCast=true;
 
-    getCast(query['id'])
+    if (query['searchFor'] == 'cast' || query['searchFor'] == undefined) {
+        searchCast = true;
+    } else if (query['searchFor'] == 'production') {
+        searchCast = false;
+    }
+
+    getDetails(query['id'], searchCast)
         .then( (cast) => {
             const options = createNewsOptions(cast);
 
@@ -20,17 +27,8 @@ router.get('/', (req, res) => {
                 return response.data;
             })
             .then ( (rsp) => {
-                // if (rsp.articles.length != 0) { //search is valid and successful //TODO: error handling
                     res.status(200).render('news', {cast: castString(cast), response:rsp.articles})
                     res.end();
-                //     console.log(res);
-                // } else if (query['query']) { //search is valid (exists) but no data to return
-                //     res.status(200).render('error', {error: 'No news!', details: 'No news articles matching that search.'});
-                //     res.end();
-                // } else { //search is not valid
-                //     res.status(400).render('error', {error: 'Invalid search', details: 'It looks like you might have an invalid url. Double check that it follows "/news?id=movie_id" where the movie id is according to The Movie Database.'});
-                //     res.end();
-                // }
             })
             .catch((error) => {
                 console.error(error);
@@ -40,15 +38,19 @@ router.get('/', (req, res) => {
 })
 
 //returns the top three cast of a given movie
-function getCast(id) {
-    const options = createTmbdMovieOptions(id);
+function getDetails(id, searchCast) {
+    const options = createTmbdMovieOptions(id, searchCast);
     const url = `https://${options.hostname}${options.path}`;
 
     let cast = axios.get(url)
         .then( (response) => {
             topThreeCast = "";
             for (let i = 0; i < 3; i++) {
-                topThreeCast+= encodeURI('"' + response.data.cast[i].name + '"OR');
+                if (searchCast) {
+                    topThreeCast+= encodeURI('"' + response.data.cast[i].name + '"OR');
+                } else {
+                    topThreeCast+= encodeURI('"' + response.data.production_companies[i].name + '"OR');
+                }
             }
             return topThreeCast.slice(0, topThreeCast.length-2);
         })
@@ -67,11 +69,15 @@ function castString(cast) {
 }
 
 //compiles options for the request to TMDB
-function createTmbdMovieOptions(id) {
-    const options = {
+function createTmbdMovieOptions(id, searchCast) {
+    let options = {
         hostname: 'api.themoviedb.org',
         port: 443,
         path: '/3/movie/'+id+'/credits?'
+    }
+
+    if (!searchCast) {
+        options.path = '/3/movie/'+id+'?';
     }
     
     const str = 'api_key=' + CONFIG.other_tmbd_api_key; //TODO: figure out why the hell it wont let me use the one?? like nothing happened to the first one???

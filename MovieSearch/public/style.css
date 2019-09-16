@@ -26,3 +26,11 @@ a:hover {
     padding-left: 15px;
     height: 250px;
 }
+
+.castButton {
+    float: left;
+}
+
+.productionButton {
+    float: left;
+}

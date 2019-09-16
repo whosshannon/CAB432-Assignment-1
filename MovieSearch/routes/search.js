@@ -18,7 +18,7 @@ router.get('/', (req, res) => {
         })
         .then ( (rsp) => {
             if (rsp.results.length != 0) { //search is valid and successful
-                res.status(200).render('search', {query: query['query'], response: rsp.results});
+                res.status(200).render('search', {query: query['query'], response: rsp.results, stage: CONFIG.stage});
                 res.end();
             } else if (query['query']) { //search is valid (exists) but no data to return
                 res.status(200).render('error', {error: 'No movies!', details: 'No movies matching the search "' + query['query'] + '"'});
