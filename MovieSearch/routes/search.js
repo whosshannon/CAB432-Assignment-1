@@ -17,8 +17,16 @@ router.get('/', (req, res) => {
             return response.data;
         })
         .then ( (rsp) => {
-            res.render('search', {query: query['query'], response: rsp.results});
-            res.end();
+            if (rsp.results.length != 0) { //search is valid and successful
+                res.status(200).render('search', {query: query['query'], response: rsp.results});
+                res.end();
+            } else if (query['query']) { //search is valid (exists) but no data to return
+                res.status(200).render('error', {error: 'No movies!', details: 'No movies matching the search "' + query['query'] + '"'});
+                res.end();
+            } else { //search is not valid
+                res.status(400).render('error', {error: 'Invalid search', details: 'It looks like you might have an invalid url. Double check that it follows "/search?query=movie%20name" where the name of the movie is url encoded.'});
+                res.end();
+            }
         })
         .catch((error) => {
             console.error(error);

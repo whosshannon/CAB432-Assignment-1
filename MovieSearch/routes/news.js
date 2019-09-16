@@ -20,8 +20,17 @@ router.get('/', (req, res) => {
                 return response.data;
             })
             .then ( (rsp) => {
-                res.render('news', {cast: castString(cast), response:rsp.articles})
-                res.end();
+                // if (rsp.articles.length != 0) { //search is valid and successful //TODO: error handling
+                    res.status(200).render('news', {cast: castString(cast), response:rsp.articles})
+                    res.end();
+                //     console.log(res);
+                // } else if (query['query']) { //search is valid (exists) but no data to return
+                //     res.status(200).render('error', {error: 'No news!', details: 'No news articles matching that search.'});
+                //     res.end();
+                // } else { //search is not valid
+                //     res.status(400).render('error', {error: 'Invalid search', details: 'It looks like you might have an invalid url. Double check that it follows "/news?id=movie_id" where the movie id is according to The Movie Database.'});
+                //     res.end();
+                // }
             })
             .catch((error) => {
                 console.error(error);
@@ -85,7 +94,7 @@ function createNewsOptions(cast) {
         path: '/v2/everything?'
     }
     
-    const str = 'q=' + cast
+    const str = 'q='+ cast
     + '&language=' + newsOptions.language
     + '&apiKey=' + newsOptions.api_key;
     
